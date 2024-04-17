@@ -1,5 +1,6 @@
 import flet as ft
-
+from database.DAO import DAO
+from model import model
 
 class View(ft.UserControl):
     def __init__(self, page: ft.Page):
@@ -13,34 +14,59 @@ class View(ft.UserControl):
         self._controller = None
         # graphical elements
         self._title = None
-        self.txt_name = None
-        self.btn_hello = None
-        self.txt_result = None
-        self.txt_container = None
+        self.ddAnno=None
+        self.ddBrand=None
+        self.ddRetailer=None
+        self.btn_topVendite =None
+        self.btn_analizzaVendite=None
+        self.lv=None
+
 
     def load_interface(self):
         # title
-        self._title = ft.Text("Hello World", color="blue", size=24)
+        self._title = ft.Text("Analisi vendite", color="blue", size=24)
         self._page.controls.append(self._title)
 
-        #ROW with some controls
-        # text field for the name
-        self.txt_name = ft.TextField(
-            label="name",
-            width=200,
-            hint_text="Insert a your name"
-        )
+        self.ddAnno=ft.Dropdown(width=200,label="anno")
+        self.ddBrand = ft.Dropdown(width=200,label="brand")
+        self.ddRetailer = ft.Dropdown(width=500,label="retailer")
 
-        # button for the "hello" reply
-        self.btn_hello = ft.ElevatedButton(text="Hello", on_click=self._controller.handle_hello)
-        row1 = ft.Row([self.txt_name, self.btn_hello],
-                      alignment=ft.MainAxisAlignment.CENTER)
-        self._page.controls.append(row1)
+        self.fillDd("anno")
+        self.fillDd("brand")
+        self.fillDd("retailer")
 
-        # List View where the reply is printed
-        self.txt_result = ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
-        self._page.controls.append(self.txt_result)
-        self._page.update()
+        row1=ft.Row([self.ddAnno,self.ddBrand,self.ddRetailer],alignment=ft.MainAxisAlignment.CENTER)
+
+        self.btn_topVendite=ft.ElevatedButton(text="Top vendite",width=200,on_click=self._controller.handleTop)
+        self.btn_analizzaVendite = ft.ElevatedButton(text="Analizza vendite", width=200,on_click=self._controller.handleAnalizza)
+
+        row2=ft.Row([self.btn_topVendite,self.btn_analizzaVendite],alignment=ft.MainAxisAlignment.CENTER)
+
+        self.lv=ft.ListView(auto_scroll=True)
+
+        self._page.add(row1,row2,self.lv)
+
+        self.update_page()
+
+
+
+
+    def fillDd(self,a):
+
+        if a=="anno":
+            self.ddAnno.options.append(ft.dropdown.Option("Nessun filtro"))
+            for i in DAO().fillAnnoDao():
+                self.ddAnno.options.append(ft.dropdown.Option(str(i)))
+
+        if a=="brand":
+            self.ddBrand.options.append(ft.dropdown.Option("Nessun filtro"))
+            for i in DAO().fillBrandDao():
+                self.ddBrand.options.append(ft.dropdown.Option(str(i)))
+
+        if a=="retailer":
+            self.ddRetailer.options.append(ft.dropdown.Option("Nessun filtro"))
+            for i in model.Model().getRetailers().values():
+                self.ddRetailer.options.append(ft.dropdown.Option(key=i.code,text=i.name))
 
     @property
     def controller(self):

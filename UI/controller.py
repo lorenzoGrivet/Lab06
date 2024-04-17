@@ -1,4 +1,5 @@
 import flet as ft
+from database import DAO
 
 
 class Controller:
@@ -8,10 +9,15 @@ class Controller:
         # the model, which implements the logic of the program and holds the data
         self._model = model
 
-    def handle_hello(self, e):
-        name = self._view.txt_name.value
-        if name is None or name == "":
-            self._view.create_alert("Inserire il nome")
-            return
-        self._view.txt_result.controls.append(ft.Text(f"Hello, {name}!"))
-        self._view.update_page()
+
+    def handleTop(self,e):
+        self._view.lv.clean()
+
+        lista= DAO.DAO().getTop5(self._view.ddAnno.value,self._view.ddBrand.value,self._view.ddRetailer.value)
+        for a in lista:
+            self._view.lv.controls.append(ft.Text(a))
+            self._view.update_page()
+        return lista
+
+    def handleAnalizza(self,e):
+        pass
