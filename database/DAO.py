@@ -109,4 +109,32 @@ limit 5
         cnx.close()
         return risultato
 
+    def analizzaDao(self, anno, brand, retailer):
+
+        cnx=DBConnect.get_connection()
+        cursor=cnx.cursor()
+
+        if anno=="Nessun filtro":
+            anno=None
+        if brand=="Nessun filtro":
+            brand=None
+        if retailer=="Nessun filtro":
+            retailer=None
+
+        lista=[]
+
+        query="""select *
+        from go_daily_sales gds 
+        inner join go_products gp on gds.Product_number = gp.Product_number 
+        where year (gds.`Date`)= coalesce(%s,year (gds.`Date`)) and gp.Product_brand = coalesce(%s, gp.Product_brand) and gds.Retailer_code = coalesce(%s,gds.Retailer_code) """
+
+        cursor.execute(query,(anno,brand,retailer,))
+
+        for i in cursor:
+            lista.append(daily_sale.DailySale(i[0],i[1],i[2],i[3],i[4],i[5],i[6]))
+
+        cursor.close()
+        cnx.close()
+        return lista
+
 

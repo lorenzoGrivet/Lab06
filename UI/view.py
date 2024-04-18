@@ -65,8 +65,10 @@ class View(ft.UserControl):
 
         if a=="retailer":
             self.ddRetailer.options.append(ft.dropdown.Option("Nessun filtro"))
-            for i in model.Model().getRetailers().values():
+            for i in self._controller._model.getRetailers().values():
                 self.ddRetailer.options.append(ft.dropdown.Option(key=i.code,text=i.name))
+
+
 
     @property
     def controller(self):

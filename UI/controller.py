@@ -14,10 +14,24 @@ class Controller:
         self._view.lv.clean()
 
         lista= DAO.DAO().getTop5(self._view.ddAnno.value,self._view.ddBrand.value,self._view.ddRetailer.value)
+
         for a in lista:
             self._view.lv.controls.append(ft.Text(a))
             self._view.update_page()
-        return lista
+        self._view.update_page()
+
 
     def handleAnalizza(self,e):
-        pass
+        self._view.lv.clean()
+        lista = self._model.analizza(self._view.ddAnno.value, self._view.ddBrand.value, self._view.ddRetailer.value)
+
+        self._view.lv.controls.append(ft.Text(f"Statistiche vendite:"))
+        self._view.lv.controls.append(ft.Text(f"Ricavi totali: {lista[0]}"))
+        self._view.lv.controls.append(ft.Text(f"Numero vendite: {lista[1]}"))
+        self._view.lv.controls.append(ft.Text(f"Numero retailers coinvolti: {lista[2]}"))
+        self._view.lv.controls.append(ft.Text(f"Numero prodotti coinvolti: {lista[3]}"))
+
+        self._view.update_page()
+
+
+
